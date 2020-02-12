@@ -2,12 +2,7 @@ package com.example;
 
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class EmployeeManager {
-
-	private static final Logger LOGGER = LogManager.getLogger(EmployeeManager.class);
 
 	private EmployeeRepository employeeRepository;
 	private BankService bankService;
@@ -26,7 +21,6 @@ public class EmployeeManager {
 				employee.setPaid(true);
 				payments++;
 			} catch (RuntimeException e) {
-				LOGGER.error("Failed payment of " + employee, e);
 				employee.setPaid(false);
 			}
 		}

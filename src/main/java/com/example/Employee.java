@@ -1,5 +1,10 @@
 package com.example;
 
+/**
+ * Model class for employee.
+ * @author demigorgan
+ *
+ */
 public class Employee {
 
 	private String id;
@@ -34,10 +39,4 @@ public class Employee {
 	public void setPaid(boolean paid) {
 		this.paid = paid;
 	}
-
-	@Override
-	public String toString() {
-		return "Employee [id=" + id + ", salary=" + salary + "]";
-	}
-
 }
