@@ -57,7 +57,7 @@ public class EmployeeManagerTest {
 				.thenReturn(asList(employee1, employee2));
 		
 		assertThat(employeeManager.payEmployees()).isEqualTo(2);
-		InOrder inOrder = inOrder(bank);
+		InOrder inOrder = inOrder(bank, employee1, employee2);
 		inOrder.verify(bank).pay("1", 1000);
 		inOrder.verify(bank).pay("2", 2000);
 		verifyNoMoreInteractions(bank);
@@ -71,8 +71,7 @@ public class EmployeeManagerTest {
 	@Test
 	public void testExampleOfArgumentCaptor() {
 		// Just an example of ArgumentCaptor
-		when(company.getAllEmployees())
-				.thenReturn(asList(employee1, employee2));
+		when(company.getAllEmployees()).thenReturn(asList(employee1, employee2));
 		
 		assertThat(employeeManager.payEmployees()).isEqualTo(2);
 		
@@ -84,7 +83,6 @@ public class EmployeeManagerTest {
 		
 		assertThat(idCaptor.getAllValues()).containsExactly("1", "2");
 		assertThat(amountCaptor.getAllValues()).containsExactly(1000.0, 2000.0);
-		verifyNoMoreInteractions(bank);
 	}
 
 	@Test
