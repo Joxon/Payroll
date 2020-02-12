@@ -12,4 +12,6 @@ public interface Bank {
 	 * specified ID.
 	 */
 	void pay(String id, double amount);
+	
+	boolean isPaid(String id);
 }
