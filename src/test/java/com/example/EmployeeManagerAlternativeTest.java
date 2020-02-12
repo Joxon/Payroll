@@ -19,10 +19,10 @@ import org.mockito.Spy;
 public class EmployeeManagerAlternativeTest {
 
 	@Mock
-	private EmployeeRepository employeeRepository;
+	private Company employeeRepository;
 
 	@Mock
-	private BankService bankService;
+	private Bank bankService;
 
 	@InjectMocks
 	private EmployeeManager employeeManager;
@@ -46,14 +46,14 @@ public class EmployeeManagerAlternativeTest {
 
 	@Test
 	public void testPayEmployeesWhenNoEmployeesArePresent() {
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 			.thenReturn(emptyList());
 		assertThat(employeeManager.payEmployees()).isEqualTo(0);
 	}
 
 	@Test
 	public void testPayEmployeesWhenOneEmployeeIsPresent() {
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 			.thenReturn(asList(new Employee("1", 1000)));
 		assertThat(employeeManager.payEmployees()).isEqualTo(1);
 		verify(bankService).pay("1", 1000);
@@ -61,7 +61,7 @@ public class EmployeeManagerAlternativeTest {
 
 	@Test
 	public void testPayEmployeesWhenSeveralEmployeeArePresent() {
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 			.thenReturn(asList(
 					new Employee("1", 1000),
 					new Employee("2", 2000)));
@@ -74,7 +74,7 @@ public class EmployeeManagerAlternativeTest {
 	@Test
 	public void testPayEmployeesInOrderWhenSeveralEmployeeArePresent() {
 		// an example of invocation order verification
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 			.thenReturn(asList(
 					new Employee("1", 1000),
 					new Employee("2", 2000)));
@@ -88,13 +88,13 @@ public class EmployeeManagerAlternativeTest {
 	@Test
 	public void testExampleOfInOrderWithTwoMocks() {
 		// Just an example of invocation order verification on several mocks
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 			.thenReturn(asList(
 					new Employee("1", 1000),
 					new Employee("2", 2000)));
 		assertThat(employeeManager.payEmployees()).isEqualTo(2);
 		InOrder inOrder = inOrder(bankService, employeeRepository);
-		inOrder.verify(employeeRepository).findAll();
+		inOrder.verify(employeeRepository).getAllEmployees();
 		inOrder.verify(bankService).pay("1", 1000);
 		inOrder.verify(bankService).pay("2", 2000);
 		verifyNoMoreInteractions(bankService);
@@ -103,7 +103,7 @@ public class EmployeeManagerAlternativeTest {
 	@Test
 	public void testExampleOfArgumentCaptor() {
 		// Just an example of ArgumentCaptor
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 			.thenReturn(asList(
 					new Employee("1", 1000),
 					new Employee("2", 2000)));
@@ -118,7 +118,7 @@ public class EmployeeManagerAlternativeTest {
 
 	@Test
 	public void testEmployeeSetPaidIsCalledAfterPaying() {
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 			.thenReturn(asList(toBePaid));
 		assertThat(employeeManager.payEmployees()).isEqualTo(1);
 		InOrder inOrder = inOrder(bankService, toBePaid);
@@ -128,7 +128,7 @@ public class EmployeeManagerAlternativeTest {
 
 	@Test
 	public void testPayEmployeesWhenBankServiceThrowsException() {
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 			.thenReturn(asList(notToBePaid));
 		doThrow(new RuntimeException()).when(bankService).pay(anyString(), anyDouble());
 		// number of payments must be 0
@@ -139,7 +139,7 @@ public class EmployeeManagerAlternativeTest {
 
 	@Test
 	public void testOtherEmployeesArePaidWhenBankServiceThrowsException() {
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 			.thenReturn(asList(notToBePaid, toBePaid));
 		doThrow(new RuntimeException())
 			.doNothing()
@@ -153,7 +153,7 @@ public class EmployeeManagerAlternativeTest {
 
 	@Test
 	public void testArgumentMatcherExample() {
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 			.thenReturn(asList(notToBePaid, toBePaid));
 		doThrow(new RuntimeException())
 			.when(bankService).pay(

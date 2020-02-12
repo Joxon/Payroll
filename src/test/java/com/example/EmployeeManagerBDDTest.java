@@ -19,10 +19,10 @@ import org.mockito.Spy;
 public class EmployeeManagerBDDTest {
 
 	@Mock
-	private EmployeeRepository employeeRepository;
+	private Company employeeRepository;
 
 	@Mock
-	private BankService bankService;
+	private Bank bankService;
 
 	@InjectMocks
 	private EmployeeManager employeeManager;
@@ -46,14 +46,14 @@ public class EmployeeManagerBDDTest {
 
 	@Test
 	public void testPayEmployeesWhenNoEmployeesArePresent() {
-		given(employeeRepository.findAll())
+		given(employeeRepository.getAllEmployees())
 			.willReturn(emptyList());
 		assertThat(employeeManager.payEmployees()).isEqualTo(0);
 	}
 
 	@Test
 	public void testPayEmployeesWhenOneEmployeeIsPresent() {
-		given(employeeRepository.findAll())
+		given(employeeRepository.getAllEmployees())
 			.willReturn(asList(new Employee("1", 1000)));
 		assertThat(employeeManager.payEmployees()).isEqualTo(1);
 		then(bankService).should().pay("1", 1000);
@@ -61,7 +61,7 @@ public class EmployeeManagerBDDTest {
 
 	@Test
 	public void testPayEmployeesWhenSeveralEmployeeArePresent() {
-		given(employeeRepository.findAll())
+		given(employeeRepository.getAllEmployees())
 			.willReturn(asList(
 					new Employee("1", 1000),
 					new Employee("2", 2000)));
@@ -74,7 +74,7 @@ public class EmployeeManagerBDDTest {
 	@Test
 	public void testPayEmployeesInOrderWhenSeveralEmployeeArePresent() {
 		// an example of invocation order verification
-		given(employeeRepository.findAll())
+		given(employeeRepository.getAllEmployees())
 			.willReturn(asList(
 					new Employee("1", 1000),
 					new Employee("2", 2000)));
@@ -88,13 +88,13 @@ public class EmployeeManagerBDDTest {
 	@Test
 	public void testExampleOfInOrderWithTwoMocks() {
 		// Just an example of invocation order verification on several mocks
-		given(employeeRepository.findAll())
+		given(employeeRepository.getAllEmployees())
 			.willReturn(asList(
 					new Employee("1", 1000),
 					new Employee("2", 2000)));
 		assertThat(employeeManager.payEmployees()).isEqualTo(2);
 		InOrder inOrder = inOrder(bankService, employeeRepository);
-		then(employeeRepository).should(inOrder).findAll();
+		then(employeeRepository).should(inOrder).getAllEmployees();
 		then(bankService).should(inOrder).pay("1", 1000);
 		then(bankService).should(inOrder).pay("2", 2000);
 		then(bankService).shouldHaveNoMoreInteractions();
@@ -103,7 +103,7 @@ public class EmployeeManagerBDDTest {
 	@Test
 	public void testExampleOfArgumentCaptor() {
 		// Just an example of ArgumentCaptor
-		given(employeeRepository.findAll())
+		given(employeeRepository.getAllEmployees())
 			.willReturn(asList(
 					new Employee("1", 1000),
 					new Employee("2", 2000)));
@@ -116,7 +116,7 @@ public class EmployeeManagerBDDTest {
 
 	@Test
 	public void testPayEmployeesWhenBankServiceThrowsException() {
-		given(employeeRepository.findAll())
+		given(employeeRepository.getAllEmployees())
 			.willReturn(asList(notToBePaid));
 		willThrow(new RuntimeException()).given(bankService).pay(anyString(), anyDouble());
 		// number of payments must be 0
@@ -127,7 +127,7 @@ public class EmployeeManagerBDDTest {
 
 	@Test
 	public void testOtherEmployeesArePaidWhenBankServiceThrowsException() {
-		given(employeeRepository.findAll())
+		given(employeeRepository.getAllEmployees())
 			.willReturn(asList(notToBePaid, toBePaid));
 		willThrow(new RuntimeException())
 			.willDoNothing()
@@ -141,7 +141,7 @@ public class EmployeeManagerBDDTest {
 
 	@Test
 	public void testArgumentMatcherExample() {
-		given(employeeRepository.findAll())
+		given(employeeRepository.getAllEmployees())
 			.willReturn(asList(notToBePaid, toBePaid));
 		willThrow(new RuntimeException())
 			.given(bankService).pay(

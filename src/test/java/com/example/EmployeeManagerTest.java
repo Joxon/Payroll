@@ -15,20 +15,20 @@ public class EmployeeManagerTest {
 
 	private EmployeeManager employeeManager;
 
-	private EmployeeRepository employeeRepository;
+	private Company employeeRepository;
 
-	private BankService bankService;
+	private Bank bankService;
 
 	@Before
 	public void setup() {
-		employeeRepository = mock(EmployeeRepository.class);
-		bankService = mock(BankService.class);
+		employeeRepository = mock(Company.class);
+		bankService = mock(Bank.class);
 		employeeManager = new EmployeeManager(employeeRepository, bankService);
 	}
 
 	@Test
 	public void testPayEmployeesWhenNoEmployeesArePresent() {
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 			.thenReturn(emptyList());
 		assertThat(employeeManager.payEmployees())
 			.isEqualTo(0);
@@ -36,7 +36,7 @@ public class EmployeeManagerTest {
 
 	@Test
 	public void testPayEmployeesWhenOneEmployeeIsPresent() {
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 			.thenReturn(asList(new Employee("1", 1000)));
 		assertThat(employeeManager.payEmployees()).isEqualTo(1);
 		verify(bankService).pay("1", 1000);
@@ -44,7 +44,7 @@ public class EmployeeManagerTest {
 
 	@Test
 	public void testPayEmployeesWhenSeveralEmployeesArePresent() {
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 			.thenReturn(asList(
 					new Employee("1", 1000),
 					new Employee("2", 2000)));
@@ -57,7 +57,7 @@ public class EmployeeManagerTest {
 	@Test
 	public void testPayEmployeesInOrderWhenSeveralEmployeeArePresent() {
 		// an example of invocation order verification
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 				.thenReturn(asList(
 						new Employee("1", 1000),
 						new Employee("2", 2000)));
@@ -71,13 +71,13 @@ public class EmployeeManagerTest {
 	@Test
 	public void testExampleOfInOrderWithTwoMocks() {
 		// Just an example of invocation order verification on several mocks
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 				.thenReturn(asList(
 						new Employee("1", 1000),
 						new Employee("2", 2000)));
 		assertThat(employeeManager.payEmployees()).isEqualTo(2);
 		InOrder inOrder = inOrder(bankService, employeeRepository);
-		inOrder.verify(employeeRepository).findAll();
+		inOrder.verify(employeeRepository).getAllEmployees();
 		inOrder.verify(bankService).pay("1", 1000);
 		inOrder.verify(bankService).pay("2", 2000);
 		verifyNoMoreInteractions(bankService);
@@ -86,7 +86,7 @@ public class EmployeeManagerTest {
 	@Test
 	public void testExampleOfArgumentCaptor() {
 		// Just an example of ArgumentCaptor
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 				.thenReturn(asList(
 						new Employee("1", 1000),
 						new Employee("2", 2000)));
@@ -103,7 +103,7 @@ public class EmployeeManagerTest {
 	@Test
 	public void testEmployeeSetPaidIsCalledAfterPaying() {
 		Employee employee = spy(new Employee("1", 1000));
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 				.thenReturn(asList(employee));
 		assertThat(employeeManager.payEmployees()).isEqualTo(1);
 		InOrder inOrder = inOrder(bankService, employee);
@@ -114,7 +114,7 @@ public class EmployeeManagerTest {
 	@Test
 	public void testPayEmployeesWhenBankServiceThrowsException() {
 		Employee employee = spy(new Employee("1", 1000));
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 				.thenReturn(asList(employee));
 		doThrow(new RuntimeException())
 				.when(bankService).pay(anyString(), anyDouble());
@@ -128,7 +128,7 @@ public class EmployeeManagerTest {
 	public void testOtherEmployeesArePaidWhenBankServiceThrowsException() {
 		Employee notToBePaid = spy(new Employee("1", 1000));
 		Employee toBePaid = spy(new Employee("2", 2000));
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 			.thenReturn(asList(notToBePaid, toBePaid));
 		doThrow(new RuntimeException())
 			.doNothing()
@@ -145,7 +145,7 @@ public class EmployeeManagerTest {
 		// equivalent to the previous test, with argument matcher
 		Employee notToBePaid = spy(new Employee("1", 1000));
 		Employee toBePaid = spy(new Employee("2", 2000));
-		when(employeeRepository.findAll())
+		when(employeeRepository.getAllEmployees())
 			.thenReturn(asList(notToBePaid, toBePaid));
 		doThrow(new RuntimeException())
 			.when(bankService).pay(

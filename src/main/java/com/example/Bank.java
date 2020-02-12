@@ -5,6 +5,11 @@ package com.example;
  * @author demigorgan
  *
  */
-public interface BankService {
+public interface Bank {
+	
+	/**
+	 * When invoked, this method pays the specified amount of money to the person with 
+	 * specified ID.
+	 */
 	void pay(String id, double amount);
 }

@@ -4,16 +4,22 @@ import java.util.List;
 
 public class EmployeeManager {
 
-	private EmployeeRepository employeeRepository;
-	private BankService bankService;
+	private Company employeeRepository;
+	private Bank bankService;
 
-	public EmployeeManager(EmployeeRepository employeeRepository, BankService bankService) {
+	public EmployeeManager(Company employeeRepository, Bank bankService) {
 		this.employeeRepository = employeeRepository;
 		this.bankService = bankService;
 	}
 
+	/**
+	 * This method retrieves the list of all employees. And pay
+	 * the employees one by one. And returns the number of employees
+	 * that has been paid.
+	 * @return
+	 */
 	public int payEmployees() {
-		List<Employee> employees = employeeRepository.findAll();
+		List<Employee> employees = employeeRepository.getAllEmployees();
 		int payments = 0;
 		for (Employee employee : employees) {
 			try {
@@ -26,5 +32,4 @@ public class EmployeeManager {
 		}
 		return payments;
 	}
-
 }

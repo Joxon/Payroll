@@ -1,7 +1,9 @@
 package com.example;
 
 /**
- * Model class for employee.
+ * Model class for employee. It holds three information -- employee ID, 
+ * employee salary, and whether or not that employee has been paid.
+ * 
  * @author demigorgan
  *
  */
