@@ -1,9 +1,5 @@
 package com.example;
 
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -12,6 +8,10 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 
 import java.util.Collections;
+
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 public class EmployeeManagerTest {
 
@@ -82,7 +82,11 @@ public class EmployeeManagerTest {
         when(company.getAllEmployees()).thenReturn(Collections.singletonList(employee1));
 
         assertThat(employeeManager.payEmployees()).isEqualTo(1);
-        verify(employee1, times(1)).setPaid(true);
+
+        InOrder inOrder = inOrder(bank, employee1);
+        inOrder.verify(bank).pay("1", 1000);
+        inOrder.verify(employee1).setPaid(true);
+        verifyNoMoreInteractions(bank);
 
         assertThat(employee1.isPaid()).isTrue();
     }
@@ -144,6 +148,10 @@ public class EmployeeManagerTest {
 
 //        cannot get Id from a spy!
 //        doThrow(new RuntimeException()).when(bank).pay(employee1.getId(), anyDouble());
+
+//        Invalid use of argument matchers!
+//        2 matchers expected, 1 recorded:
+//        doThrow(new RuntimeException()).when(bank).pay("1", anyDouble());
 
         doThrow(new RuntimeException()).when(bank).pay("1", 1000);
 
